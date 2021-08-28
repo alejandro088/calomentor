@@ -11,44 +11,46 @@ export const createAndUpdateUserValidations = (
   skills
 ) => {
   let errorMessage = "";
+  let isValid = true;
 
-  if (!discord_username || typeof discord_username !== "string" ) {
+  if (!discord_username || typeof discord_username !== "string") {
     errorMessage = "Bad Request: discord_username is required or it's not a string.";
-    throwResponse(callback, errorMessage, 400);
+      isValid = false;
   }
 
-  if (!full_name || typeof full_name !== "string" ) {
+  if (!full_name || typeof full_name !== "string") {
     errorMessage = "Bad Request: full_name is required or it's not a string.";
-    throwResponse(callback, errorMessage, 400);
+    isValid = false;
   }
 
-  if (!email || typeof email !== "string" ) {
+  if (!email || typeof email !== "string") {
     errorMessage = "Bad Request: email is required or it's not a string.";
-    throwResponse(callback, errorMessage, 400);
+    isValid = false;
   }
 
-  if (!url_photo || typeof url_photo !== "string" ) {
+  if (!url_photo || typeof url_photo !== "string") {
     errorMessage = "Bad Request: url_photo is required or it's not a string.";
-    throwResponse(callback, errorMessage, 400);
+    isValid = false;
   }
 
-  if (!role || !role.length || !Array.isArray(role)) {
+  if (!Array.isArray(role) || !role.length ) {
     errorMessage = "Bad Request: role is required or it's not an array.";
-    throwResponse(callback, errorMessage, 400);
+    isValid = false;
   }
 
   if (
     !links ||
-    Array.isArray(links) ||
     typeof links !== "object" ||
+    Array.isArray(links) ||
     Object.keys(links).length === 0
   ) {
     errorMessage = "Bad Request: links is required or it's not an object.";
-    throwResponse(callback, errorMessage, 400);
+    isValid = false;
   }
 
-  if (!skills || !skills.length || !Array.isArray(skills)) {
+  if (!Array.isArray(skills) || !skills.length ) {
     errorMessage = "Bad Request: skills is required or it's not an array.";
-    throwResponse(callback, errorMessage, 400);
+    isValid = false;
   }
+  return { isValid, errorMessage };
 };

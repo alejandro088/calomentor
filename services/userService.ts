@@ -1,6 +1,5 @@
 import { Callback, Context } from "aws-lambda";
 import { TABLE_NAME_USER } from "../constants";
-import { GlobalResponse } from "../types/globalTypes";
 import { throwResponse } from "../utils/throwResponse";
 import { createAndUpdateUserValidations } from "../utils/validations";
 
@@ -26,12 +25,11 @@ export const createUserService = (
   } = JSON.parse(event.body);
 
   if (!discord_id || typeof discord_id !== "string" ) {
-    responseMessage = "Bad Request: discord_id is required.";
-    throwResponse(callback, responseMessage, 400);
+    responseMessage = "Bad Request: discord_id is required or it's not a string.";
+    return throwResponse(callback, responseMessage, 400);
   }
 
-  createAndUpdateUserValidations(
-    callback,
+  const { isValid, errorMessage } = createAndUpdateUserValidations(
     discord_username,
     full_name,
     email,
@@ -40,6 +38,10 @@ export const createUserService = (
     links,
     skills
   );
+  console.log("errorMessage", errorMessage, isValid)
+  if (!isValid) {
+    return throwResponse(callback, errorMessage, 400);
+  }
 
   const user = {
     id: discord_id,
@@ -159,8 +161,7 @@ export const updateUserByIdService = (
   const { discord_username, full_name, email, url_photo, role, links, skills } =
     JSON.parse(event.body);
 
-  createAndUpdateUserValidations(
-    callback,
+    const { isValid, errorMessage } = createAndUpdateUserValidations(
     discord_username,
     full_name,
     email,
@@ -169,6 +170,10 @@ export const updateUserByIdService = (
     links,
     skills
   );
+
+  if (!isValid) {
+    return throwResponse(callback, errorMessage, 400);
+  }
 
   const params = {
     TableName: TABLE_NAME_USER,
@@ -213,9 +218,9 @@ export const activateUserService = (
 ): void => {
   const { isActive } = JSON.parse(event.body);
 
-  if (!isActive || typeof isActive !== "boolean") {
+  if (typeof isActive !== "boolean") {
     responseMessage = "Bad Request: isActive property is missing or it's not boolean.";
-    throwResponse(callback, responseMessage, 400);
+    return throwResponse(callback, responseMessage, 400);
   }
 
   const params = {
