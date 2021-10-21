@@ -22,6 +22,7 @@ import {
   reminderMentorship,
   updateRoleMentorship,
 } from "./services/mentorshipService";
+import { agusPhraseAuthorizer } from "./authorizer";
 
 // User functions handlers
 
@@ -130,3 +131,10 @@ export const deleteSlot: Handler = (
   context: Context,
   callback: Callback<any>
 ) => deleteTimeSlot(event, context, callback);
+
+// Authorizer
+export const authorizer: Handler = (
+  event: any,
+  context: Context,
+  callback: Callback<any>
+) => agusPhraseAuthorizer(event, context, callback);

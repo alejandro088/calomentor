@@ -36,6 +36,8 @@ plugins:
   - serverless-pseudo-parameters
 
 functions:
+  authorizer:
+    handler: index.authorizer
   activate:
     handler: index.activateUser
     events:
@@ -60,6 +62,10 @@ functions:
           method: get
           cors: true
           private: true
+          authorizer:
+            name: authorizer
+            type: request
+            identitySource: method.request.header.x-agus-phrase
   getUserById:
     handler: index.getUserById
     events:
